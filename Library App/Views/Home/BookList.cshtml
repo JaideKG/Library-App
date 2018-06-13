@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Book List";
+}
+<input id="bob" list="booklist" class="form-control"
+       oninput="search()">
+
+<datalist id="booklist"></datalist>
+
+<table class="table table-striped" id="books">
+    <!-- this is the inner HTML for #customers -->
+</table>
+
+<script type="text/javascript"
+        src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script>
+    function search() {
+        $.ajax(
+            {
+                type: 'POST',
+                url: '/Home/GetBooksByAuthor',
+                data: '{author: "' + document.getElementById("bob").value
+                    + '"}',
+                contentType: 'application/json; charset-utf-8',
+                dataType: 'json',
+                success:
+                    function (response) {
+                        var tableHTML = "<tr><th>Cust ID</th>"
+                            + "<th>Author</th>"
+                            + "<th>Title</th>"
+                            + "<th>YearPublished</th></tr>";
+                        var bookList = "";
+
+                        for (var i = 0; i < response.length; i++) {
+                            var book = response[i];
+                            var tr = "<tr><td>" + book.Ranking + "</td>"
+                                + "<td>" + book.YearPublished + "</td>"
+                                + "</tr>";
+                            tableHTML += tr;
+                            bookList += '<option value="' + book.Author + '" />';
+
+                        }
+                        document.getElementById("books")
+                            .innerHTML = tableHTML;
+                        document.getElementById("booklist")
+                            .innerHTML = prodList;
+                    },
+                failure: function (response) {
+                    alert("Failure" + response.responseText);
+                },
+                error: function (response) {
+                    alert("Error" + response.responseText);
+                }
+            }
+
+        );
+    }
+</script>
